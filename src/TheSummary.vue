@@ -1,11 +1,9 @@
 <template>
-<script type="text/x-template" id="summary-template">
-  <b-table @row-clicked='click' small fixed striped :items='items' :fields='fields' :sortCompare='customSort'>
-    <template slot="timestamp" slot-scope="data">
-      <timeago :since='parseInt(data.item.timestamp)'></timeago>
-    </template>
-  </b-table>
-</script>
+<b-table @row-clicked='click' small fixed striped :items='items' :fields='fields' :sortCompare='customSort'>
+  <template slot="timestamp" slot-scope="data">
+    <timeago :since='parseInt(data.item.timestamp)'></timeago>
+  </template>
+</b-table>
 </template>
 
 <script>
@@ -43,7 +41,7 @@ export default {
           let tot = STORE.session.casenum[key];
           if (!value) return '&nbsp;';
           if (!value.compile) return '<div class="progress"><div class="progress-bar" role="progressbar" style="width: 100%" ></div></div>';
-          res = '';
+          let res = '';
           if (value.errors)
             res += `<div class="progress-bar bg-danger" role="progressbar" style="width: ${(100*value.errors)/tot}%" >${value.errors}</div>`;
           if (value.diffs)
@@ -74,7 +72,7 @@ export default {
             let summaries = this.session.summaries;
             let local_items = [];
             console.log(summaries);
-            for (uid in summaries) {
+            for (let uid in summaries) {
                 let entry = summaries[uid];
                 let info = this.session.uids.find(e => e.uid == uid).info;
                 local_items.push(Object.assign({

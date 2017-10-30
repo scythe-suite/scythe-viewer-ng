@@ -8,6 +8,7 @@
 
 <script>
 import STORE from './store.js';
+import { set_details } from './rest.js';
 
 export default {
     name: 'the-symmary',
@@ -34,7 +35,6 @@ export default {
           let exercise = this.session.exercises[idx];
           if (!exercise) return;
           set_details(item.uid, item.timestamp, exercise);
-          viewer.currentView = 'the-details';
       },
       resultFormatter: function(value, key, item) {
           if (!STORE.session.casenum[key]) return value;
@@ -71,7 +71,6 @@ export default {
             if (!this.session.id) return [];
             let summaries = this.session.summaries;
             let local_items = [];
-            console.log(summaries);
             for (let uid in summaries) {
                 let entry = summaries[uid];
                 let info = this.session.uids.find(e => e.uid == uid).info;

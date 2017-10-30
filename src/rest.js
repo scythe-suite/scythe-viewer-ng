@@ -68,7 +68,7 @@ function set_summary(session, auth) {
             results: []
         });
         if (DEBUG) console.log(`Updated session to '${STORE.session.id}'`);
-        if (DEBUG) console.log(STORE.session);
+        if (DEBUG) console.log(STORE);
         STORE.current_view = 'the-summary';
         window.location.hash = auth ? `#s/${session}/${auth}` : `#s/${session}`;
     }));

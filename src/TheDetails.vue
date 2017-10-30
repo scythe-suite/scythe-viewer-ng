@@ -22,7 +22,7 @@
     </b-tab>
     <b-tab :disabled='texts.length == 0' title="Texts">
         <b-card v-for="text in texts" :header="text.name" :key="text.name">
-            <div v-html='text.marked' class="card-text"></div>
+            <div v-html='text.marked' class="markdown-body card-text"></div>
         </b-card>
     </b-tab>
     <b-tab :disabled='caseNames.length == 0' title="Cases">
@@ -38,6 +38,24 @@
 </template>
 
 <script>
+import marked from 'marked';
+marked.setOptions({
+  renderer: new marked.Renderer(),
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: true,
+  smartLists: true,
+  smartypants: false
+});
+import 'github-markdown-css/github-markdown.css';
+
+import hljs from 'highlight.js';
+import 'highlight.js/styles/solarized-light.css';
+
+import STORE from './store.js';
+
 export default {
     name: 'the-details',
     data: () => ({session: STORE.session, details: STORE.details}),
@@ -57,7 +75,7 @@ export default {
             if (typeof original === 'undefined') return [];
             return original.map(e => ({
                 name: e.name,
-                marked: marked(e.content, {sanitize: true})
+                marked: marked(e.content)
             }));
         },
         caseNames: function() {

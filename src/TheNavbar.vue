@@ -28,7 +28,7 @@ export default {
             get: function() {return this.store.session.id;},
             set: function(session) {if (session != this.store.session.id) set_summary(session);}
         },
-        summary: () => this.store.current_view == 'the-summary',
+        summary: function() {return this.store.current_view == 'the-summary';},
         lock: function() {return this.store.session.auth ? 'unlock': 'lock';}
     },
     methods: {

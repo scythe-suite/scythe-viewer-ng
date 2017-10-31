@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import VueSocketio from 'vue-socket.io';
+//import VueSocketio from 'vue-socket.io';
 //Vue.use(VueSocketio, 'http://socketserver.com:1923');
 
 import BootstrapVue from 'bootstrap-vue'

@@ -1,11 +1,17 @@
 var path = require('path')
 var webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/main.js',
+  plugins: [
+      new HtmlWebpackPlugin({
+          title: 'Scythe Viewer',
+          template: './src/index.html'
+      })
+  ],
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
     filename: 'build.js'
   },
   module: {

@@ -32,7 +32,7 @@ export default {
         lock: function() {return this.store.session.auth ? 'unlock': 'lock';}
     },
     methods: {
-        click: () => this.store.current_view = 'the-summary',
+        click: function() {this.store.current_view = 'the-summary';},
     }
 };
 </script>

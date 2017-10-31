@@ -1,0 +1,11 @@
+#!/bin/bash
+
+yarn install
+
+rm -rf dist
+yarn run build
+rm -f dist/*.map
+
+mkdir -p release
+
+tar -C dist -zcvf ./release/site.tgz .

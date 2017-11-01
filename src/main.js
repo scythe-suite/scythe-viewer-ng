@@ -1,7 +1,8 @@
 import Vue from 'vue'
 
-//import VueSocketio from 'vue-socket.io';
-//Vue.use(VueSocketio, 'http://socketserver.com:1923');
+import VueSocketio from 'vue-socket.io';
+import socketio from 'socket.io-client';
+Vue.use(VueSocketio, socketio('', {path: document.location.pathname + 'r/socket.io'}));
 
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -24,4 +25,15 @@ Vue.use(VueTimeago, {
 import App from './App.vue';
 import { go } from './rest.js';
 
-go(new Vue({render: h => h(App)}));
+go(new Vue({
+    render: h => h(App),
+    sockets: {
+        connect: function(){
+            console.log('socket connected')
+        },
+        new_result: function(msg){
+            console.log('got results');
+            console.log(msg);
+        }
+    }
+}));

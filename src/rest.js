@@ -1,7 +1,7 @@
-const DEBUG = true;
-
 import axios from 'axios';
 import STORE from './store.js';
+
+const DEBUG = true;
 
 function set_details(uid, timestamp, exercise) {
     if (uid == STORE.details.uid && timestamp == STORE.details.timestamp && exercise == STORE.details.exercise) {

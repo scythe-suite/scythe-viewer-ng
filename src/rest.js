@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 import axios from 'axios';
 import STORE from './store.js';
 
@@ -92,10 +94,23 @@ function onHashchange() {
         STORE.current_view = 'the-home';
 }
 
-function go(root_app) {
+function mount(root_app) {
     window.addEventListener('hashchange', onHashchange);
     set_sessions(root_app);
     onHashchange();
 }
 
-export {set_details, set_sessions, set_summary, onHashchange, go};
+function handle_summary_message(data) {
+    if (DEBUG) console.log(data);
+    if (data.session_id != STORE.session.id) return;
+    let payload = {
+        timestamp: data.timestamp,
+        summary: data.summary
+    };
+    if (STORE.session.summaries[data.uid])
+        Object.assign(STORE.session.summaries[data.uid], payload);
+    else
+        Vue.set(STORE.session.summaries, data.uid, payload);
+}
+
+export {set_details, set_sessions, set_summary, mount, handle_summary_message};

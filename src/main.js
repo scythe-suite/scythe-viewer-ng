@@ -23,17 +23,18 @@ Vue.use(VueTimeago, {
 });
 
 import App from './App.vue';
-import { go } from './rest.js';
+import { mount, handle_summary_message } from './rest.js';
 
-go(new Vue({
+mount(new Vue({
     render: h => h(App),
     sockets: {
-        connect: function(){
+        connect: function() {
             console.log('socket connected')
         },
-        new_result: function(msg){
-            console.log('got results');
-            console.log(msg);
+        summary_message: function(msg) {
+            console.log('got summary_message');
+            let data = JSON.parse(msg.data.data);
+            handle_summary_message(data);
         }
     }
 }));

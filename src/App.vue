@@ -1,8 +1,8 @@
 <template>
-<div id='app'><b-container fluid>
+  <b-container fluid>
   <the-navbar></the-navbar>
   <b-row><b-col><component :is='store.current_view'></component></b-col></b-row>
-</b-container></div>
+  </b-container>
 </template>
 
 <script>

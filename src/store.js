@@ -2,7 +2,6 @@ const STORE = {
     current_view: 'the-home',
     load: 0,
     sessions: [],
-    overview: {},
     session: { // predeclared for mutation detection
         id: null, // a string
         auth: null, // a string

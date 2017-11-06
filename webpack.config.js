@@ -1,18 +1,37 @@
 var path = require('path')
 var webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+var CommonsChunkPlugin = require('webpack').optimize.CommonsChunkPlugin;
 
 module.exports = {
-  entry: './src/main.js',
+  entry: {
+    app: './src/app.js',
+    overview: './src/overview.js'
+  },
   plugins: [
+      new CommonsChunkPlugin({
+          name: 'common'
+      }),
       new HtmlWebpackPlugin({
+          inject: false,
+          template: require('html-webpack-template'),
           title: 'Scythe Viewer',
-          template: './src/index.html'
-      })
+          appMountId: 'app',
+          filename: 'index.html',
+          chunks: ['app', 'common']
+      }),
+      new HtmlWebpackPlugin({
+          inject: false,
+          template: require('html-webpack-template'),
+          title: 'Scythe Overview',
+          appMountId: 'app',
+          filename: 'overview.html',
+          chunks: ['overview', 'common']
+      }),
   ],
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'build.js'
+    filename: '[name].js'
   },
   module: {
     rules: [

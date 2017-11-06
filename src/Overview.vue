@@ -1,14 +1,13 @@
 <template>
-  <b-table small fixed  :items='items' :fields='fields'></b-table>
+  <b-container fluid>
+    <b-table small fixed  :items='items' :fields='fields'></b-table>
+  </b-container>
 </template>
 
 <script>
-import STORE from './store.js';
-import { set_details } from './rest.js';
-
 export default {
-    name: 'the-overview',
-    data: () => ({overview: STORE.overview}),
+    name: 'overview',
+    props: ['overview'],
     methods: {
         resultFormatter: function(value, key, item) {
           if (key == 'uid' || value === undefined) return value;
@@ -20,7 +19,7 @@ export default {
     computed: {
         fields: function() {
             if (!this.overview) return [];
-            let local_fields = [{key: 'uid', sortable: true}];
+            let local_fields = [{key: 'uid', sortable: true}, {key: 'info', sortable: true}];
             this.overview.sessions.forEach(
                 s => local_fields.push({
                     key: s,
@@ -42,7 +41,7 @@ export default {
             let local_items = [];
             let num_sessions = this.overview.sessions.length;
             Object.keys(this.overview.uids).sort().forEach(uid => {
-                let row = {uid: uid};
+                let row = {uid: uid, info: this.overview.uids[uid].info};
                 let total = 0;
                 this.overview.sessions.forEach(s => {
                     let summary = this.overview.summaries[s][uid];
@@ -67,3 +66,10 @@ export default {
     }
 };
 </script>
+
+<style>
+body {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+</style>

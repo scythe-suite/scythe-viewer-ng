@@ -10,13 +10,12 @@ import TheNavbar from './TheNavbar.vue'
 import TheHome from './TheHome.vue'
 import TheSummary from './TheSummary.vue'
 import TheDetails from './TheDetails.vue'
-import TheOverview from './TheOverview.vue'
 import STORE from './store.js'
 
 export default {
   name: 'app',
   data: () => ({store: STORE}),
-  components: {TheNavbar, TheHome, TheSummary, TheDetails, TheOverview}
+  components: {TheNavbar, TheHome, TheSummary, TheDetails}
 }
 </script>
 

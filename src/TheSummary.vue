@@ -73,7 +73,7 @@ export default {
             let local_items = [];
             for (let uid in summaries) {
                 let entry = summaries[uid];
-                let info = this.session.uids.find(e => e.uid == uid).info;
+                let info = this.session.uids[uid].info;
                 local_items.push(Object.assign({
                     uid: uid,
                     info: info,

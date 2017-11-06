@@ -5,6 +5,14 @@ import STORE from './store.js';
 
 const DEBUG = true;
 
+function uidlist2map(lst) {
+    let map = {};
+    lst.forEach(e => {
+        map[e.uid] = e;
+    });
+    return map;
+}
+
 function set_details(uid, timestamp, exercise) {
     if (uid == STORE.details.uid && timestamp == STORE.details.timestamp && exercise == STORE.details.exercise) {
         STORE.current_view = 'the-details';
@@ -54,7 +62,7 @@ function set_summary(session, auth) {
         Object.assign(STORE.session, {
             id: session,
             auth: auth,
-            uids: uids.data.uids,
+            uids: uidlist2map(uids.data.uids),
             exercises: Object.keys(exe2num).sort(),
             casenum: exe2num,
             summaries: summaries ? summaries.data.summaries : {},

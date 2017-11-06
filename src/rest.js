@@ -43,7 +43,7 @@ function set_summary(session, auth) {
         axios.get(`r/sessions`),
         axios.get(`r/uids/${session}`),
         axios.get(`r/exercises/${session}`),
-        axios.get(`r/summaries/${session}${qauth}`).catch(()=>{}),
+        axios.get(`r/summaries/${session}`),
         axios.get(`r/texts/${session}${qauth}`).catch(()=>{}),
         axios.get(`r/cases/${session}${qauth}`).catch(()=>{})
     ]).catch(function(error) {
@@ -100,17 +100,22 @@ function mount(root_app) {
     onHashchange();
 }
 
-function handle_summary_message(data) {
-    if (DEBUG) console.log(data);
-    if (data.session_id != STORE.session.id) return;
-    let payload = {
-        timestamp: data.timestamp,
-        summary: data.summary
-    };
-    if (STORE.session.summaries[data.uid])
-        Object.assign(STORE.session.summaries[data.uid], payload);
-    else
-        Vue.set(STORE.session.summaries, data.uid, payload);
+function handle_load_message(load) {
+    if (DEBUG) console.log(load);
+    STORE.load = load;
 }
 
-export {set_details, set_sessions, set_summary, mount, handle_summary_message};
+function handle_summary_message(summary) {
+    if (DEBUG) console.log(summary);
+    if (summary.session_id != STORE.session.id) return;
+    let payload = {
+        timestamp: summary.timestamp,
+        summary: summary.summary
+    };
+    if (STORE.session.summaries[summary.uid])
+        Object.assign(STORE.session.summaries[summary.uid], payload);
+    else
+        Vue.set(STORE.session.summaries, summary.uid, payload);
+}
+
+export {set_details, set_sessions, set_summary, mount, handle_summary_message, handle_load_message};

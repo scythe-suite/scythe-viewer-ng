@@ -1,5 +1,6 @@
 const STORE = {
     current_view: 'the-home',
+    load: 0,
     sessions: [],
     session: { // predeclared for mutation detection
         id: null, // a string

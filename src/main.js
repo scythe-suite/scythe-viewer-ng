@@ -23,7 +23,7 @@ Vue.use(VueTimeago, {
 });
 
 import App from './App.vue';
-import { mount, handle_summary_message } from './rest.js';
+import { mount, handle_summary_message, handle_load_message } from './rest.js';
 
 mount(new Vue({
     render: h => h(App),
@@ -33,8 +33,11 @@ mount(new Vue({
         },
         summary_message: function(msg) {
             console.log('got summary_message');
-            let data = JSON.parse(msg.data.data);
-            handle_summary_message(data);
-        }
+            handle_summary_message(msg.summary);
+        },
+        load_message: function(msg) {
+            console.log('got load_message');
+            handle_load_message(msg.load);
+        },
     }
 }));

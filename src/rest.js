@@ -93,11 +93,40 @@ function set_sessions(root_app) {
     });
 }
 
+function set_overview() {
+    axios.get(`r/sessions`).then(function(sessions) {
+        sessions = sessions.data.sessions;
+        let gets = [];
+        sessions.map(session => {gets.push(axios.all([
+            axios.get(`r/uids/${session}`),
+            axios.get(`r/exercises/${session}`),
+            axios.get(`r/summaries/${session}`)
+        ]));});
+        let uids = {}, exercises = {}, summaries = {};
+        axios.all(gets).then(function(data) {
+            for (let i = 0; i < sessions.length; i++) {
+                Object.assign(uids, uidlist2map(data[i][0].data.uids));
+                exercises[sessions[i]] = data[i][1].data.exercises;
+                summaries[sessions[i]] = data[i][2].data.summaries;
+            }
+            Object.assign(STORE.overview, {
+                sessions: sessions,
+                uids: uids,
+                exercises: exercises,
+                summaries: summaries
+            });
+            STORE.current_view = 'the-overview';
+        });
+    });
+}
+
 function onHashchange() {
     let hash = window.location.hash.split('/');
     if (DEBUG) console.log(hash);
     if (hash[0] == '#s' && (hash.length == 2 || hash.length == 3))
         set_summary(hash[1], hash[2]);
+    else if (hash[0] == '#o')
+        set_overview();
     else
         STORE.current_view = 'the-home';
 }
@@ -126,4 +155,4 @@ function handle_summary_message(summary) {
         Vue.set(STORE.session.summaries, summary.uid, payload);
 }
 
-export {set_details, set_sessions, set_summary, mount, handle_summary_message, handle_load_message};
+export {set_details, set_sessions, set_summary, set_overview, mount, handle_summary_message, handle_load_message};

@@ -2,13 +2,14 @@ const STORE = {
     current_view: 'the-home',
     load: 0,
     sessions: [],
+    overview: {},
     session: { // predeclared for mutation detection
         id: null, // a string
         auth: null, // a string
         summaries: {}, // map from uids to summary objects
         texts: {}, // map from exercise name to an array of text objects
         cases: {}, // map from exercise name to an array of case objects
-        uids: [], // list of uids
+        uids: [], // map from uids to uid objects
         exercises: [], // list of exercise names
         casenum: {} // map from exercise name to the numer of its casess
     },

@@ -1,6 +1,8 @@
 <template>
   <b-container fluid>
-    <b-table small fixed  :items='items' :fields='fields'></b-table>
+    <b-form-checkbox v-model='onlyseen'>Hide never seen students</b-form-checkbox>
+    <b-form-checkbox v-model='justoks'>Count exercises with at least one passing case as perfect</b-form-checkbox>
+    <b-table small fixed :filter='filter' :items='items' :fields='fields'></b-table>
   </b-container>
 </template>
 
@@ -8,13 +10,20 @@
 export default {
     name: 'overview',
     props: ['overview'],
+    data: () => ({
+        onlyseen: true,
+        justoks: false
+    }),
     methods: {
         resultFormatter: function(value, key, item) {
           if (key == 'uid' || value === undefined) return value;
           let val = Math.floor(value * 100);
           let res = `<div class="progress-bar bg-success" role="progressbar" style="width: ${val}%">${val ? val : ''}</div>`;
           return `<div class="progress">${res}</div>`;
-        }
+      },
+      filter: function(row) {
+          return row['_TOTAL_'] !== undefined || !this.onlyseen;
+      }
     },
     computed: {
         fields: function() {
@@ -43,22 +52,24 @@ export default {
             Object.keys(this.overview.uids).sort().forEach(uid => {
                 let row = {uid: uid, info: this.overview.uids[uid].info};
                 let total = 0;
+                let seen = false;
                 this.overview.sessions.forEach(s => {
                     let summary = this.overview.summaries[s][uid];
                     if (summary) {
+                        seen = true;
                         summary = summary.summary;
                         let exercises = this.overview.exercises[s];
                         let num_exercises = Object.keys(exercises).length;
                         let ratio = 0, num = 0;
                         for (let e in exercises) {
                             if (summary[e] && summary[e].oks)
-                                ratio += summary[e].oks / exercises[e];
+                                ratio += this.justoks ? 1 : summary[e].oks / exercises[e];
                         }
                         row[s] = ratio / num_exercises;
                         total += row[s];
                     }
                 });
-                row['_TOTAL_'] = total / num_sessions;
+                row['_TOTAL_'] = seen ? total / num_sessions : undefined;
                 local_items.push(row);
             });
             return local_items;

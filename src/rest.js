@@ -86,7 +86,7 @@ function set_summary(session, auth) {
 
 function set_sessions(root_app) {
     axios.get(`r/sessions`).then(function(sessions) {
-        STORE.sessions = sessions.data.sessions;
+        STORE.sessions = (sessions.data.sessions).sort().reverse();
         if (DEBUG) console.log(`Known sessions '${STORE.sessions}'`);
         STORE.current_view = 'the-home';
         root_app.$mount('#app');

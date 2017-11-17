@@ -14,7 +14,7 @@ const STORE = {overview: {}};
 const vueapp = new Vue({render: h => h(Overview, {props: STORE})});
 
 axios.get(`r/sessions`).then(function(sessions) {
-    sessions = sessions.data.sessions;
+    sessions = (sessions.data.sessions).sort();
     let gets = [];
     sessions.map(session => {gets.push(axios.all([
         axios.get(`r/uids/${session}`),

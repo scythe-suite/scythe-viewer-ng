@@ -48,7 +48,6 @@ function set_summary(session, auth) {
     }
     let qauth = auth ? `?auth=${auth}` : '';
     axios.all([
-        axios.get(`r/sessions`),
         axios.get(`r/uids/${session}`),
         axios.get(`r/exercises/${session}`),
         axios.get(`r/summaries/${session}`),
@@ -56,8 +55,7 @@ function set_summary(session, auth) {
         axios.get(`r/cases/${session}${qauth}`).catch(()=>{})
     ]).catch(function(error) {
         if (DEBUG) console.log(error);
-    }).then(axios.spread(function(sessions, uids, exercises, summaries, texts, cases) {
-        STORE.sessions = sessions.data.sessions;
+    }).then(axios.spread(function(uids, exercises, summaries, texts, cases) {
         let exe2num = exercises.data.exercises;
         Object.assign(STORE.session, {
             id: session,

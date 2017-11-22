@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import { computePercentages } from './utils.js';
+
 export default {
     name: 'overview',
     props: ['overview'],
@@ -15,7 +17,7 @@ export default {
         justoks: false
     }),
     methods: {
-        resultFormatter: function(value, key, item) {
+      resultFormatter: function(value, key, item) {
           if (key == 'uid' || value === undefined) return value;
           let val = Math.floor(value * 100);
           let res = `<div class="progress-bar bg-success" role="progressbar" style="width: ${val}%">${val ? val : ''}</div>`;
@@ -48,28 +50,9 @@ export default {
         items: function() {
             if (!this.overview) return [];
             let local_items = [];
-            let num_sessions = this.overview.sessions.length;
             Object.keys(this.overview.uids).sort().forEach(uid => {
                 let row = {uid: uid, info: this.overview.uids[uid].info};
-                let total = 0;
-                let seen = false;
-                this.overview.sessions.forEach(s => {
-                    let summary = this.overview.summaries[s][uid];
-                    if (summary) {
-                        seen = true;
-                        summary = summary.summary;
-                        let exercises = this.overview.exercises[s];
-                        let num_exercises = Object.keys(exercises).length;
-                        let ratio = 0, num = 0;
-                        for (let e in exercises) {
-                            if (summary[e] && summary[e].oks)
-                                ratio += this.justoks ? 1 : summary[e].oks / exercises[e];
-                        }
-                        row[s] = ratio / num_exercises;
-                        total += row[s];
-                    }
-                });
-                row['_TOTAL_'] = seen ? total / num_sessions : undefined;
+                Object.assign(row, computePercentages(uid, this.overview, this.justoks));
                 local_items.push(row);
             });
             return local_items;

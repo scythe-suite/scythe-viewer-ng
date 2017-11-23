@@ -42,7 +42,7 @@ function computePercentages(uid, overview, justoks = false) {
 
 const STORE = new Vuex.Store({
     state: {
-        current_view: 'the-home',
+        current_view: 'home',
         load: 0,
         sessions: [],
         overview: {},
@@ -56,17 +56,17 @@ const STORE = new Vuex.Store({
             exercises: [], // list of exercise names
             casenum: {} // map from exercise name to the numer of its casess
         },
-        details: { // predeclared for mutation detection
+        exercise: { // predeclared for mutation detection
             uid: null, // a string
             timestamp: null, // a string
-            exercise: null, // a string
+            name: null, // a string
             solutions: [], // an array of solution objects
             compilation: null, // a string
             results: [] // an array with an entry per case
         }
     },
     mutations: {
-        set_view(state, view) {
+        set_view(state, {view}) {
             state.current_view = view;
         },
         set_sessions(state, sessions) {
@@ -77,15 +77,15 @@ const STORE = new Vuex.Store({
             Object.assign(state.overview, overview);
             state.current_view = next;
         },
-        set_session(state, {session, details}) {
+        set_session(state, {session, exercise}) {
             Object.assign(state.session, session);
-            Object.assign(state.details, details);
-            state.current_view = 'the-summary';
+            Object.assign(state.exercise, exercise);
+            state.current_view = 'session';
         },
-        set_details(state, {details}) {
-            if (DEBUG) console.log(details);
-            Object.assign(state.details, details);
-            state.current_view = 'the-details';
+        set_exercise(state, {exercise}) {
+            if (DEBUG) console.log(exercise);
+            Object.assign(state.exercise, exercise);
+            state.current_view = 'exercise';
         },
         SOCKET_LOAD_MESSAGE(state, {load}) {
             if (DEBUG) {
@@ -166,19 +166,18 @@ const STORE = new Vuex.Store({
                     texts: texts ? texts.data.texts : {},
                     cases: cases ? cases.data.cases : {}
                 };
-                let details = {
+                let exercise = {
                     uid: null,
                     timestamp: null,
-                    exercise: null,
+                    name: null,
                     solutions: [],
                     compilation: null,
                     results: []
                 };
-                commit('set_session', {session, details});
-                // window.location.hash = auth ? `#s/${session}/${auth}` : `#s/${session}`;
+                commit('set_session', {session, exercise});
             }));
         },
-        fetch_details({commit}, {uid, timestamp, exercise}) {
+        fetch_exercise({commit}, {uid, timestamp, exercise_name}) {
             // if (uid == STORE.details.uid && timestamp == STORE.details.timestamp && exercise == STORE.details.exercise) {
             //     STORE.current_view = 'the-details';
             //     return;
@@ -186,21 +185,21 @@ const STORE = new Vuex.Store({
             let qauth = STORE.state.session.auth ? `?auth=${STORE.state.session.auth}` : '';
             let session_id = STORE.state.session.id;
             axios.all([
-                axios.get(`r/solutions/${session_id}/${uid}/${timestamp}/${exercise}${qauth}`).catch(() => {}),
-                axios.get(`r/results/${session_id}/${uid}/${timestamp}/${exercise}${qauth}`).catch(() => {}),
-                axios.get(`r/compilations/${session_id}/${uid}/${timestamp}/${exercise}${qauth}`).catch(() => {})
+                axios.get(`r/solutions/${session_id}/${uid}/${timestamp}/${exercise_name}${qauth}`).catch(() => {}),
+                axios.get(`r/results/${session_id}/${uid}/${timestamp}/${exercise_name}${qauth}`).catch(() => {}),
+                axios.get(`r/compilations/${session_id}/${uid}/${timestamp}/${exercise_name}${qauth}`).catch(() => {})
             ]).catch(function(error) {
                 if (DEBUG) console.log(error);
             }).then(axios.spread(function(solutions, results, compilation) {
-                let details = {
+                let exercise = {
                     uid: uid,
                     timestamp: timestamp,
-                    exercise: exercise,
+                    name: exercise_name,
                     solutions: solutions ? solutions.data.solutions : [],
                     compilation: compilation ? compilation.data.compilations : '',
                     results: results ? results.data.results : []
                 };
-                commit('set_details', {details});
+                commit('set_exercise', {exercise});
             }));
         }
     }

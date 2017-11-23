@@ -4,8 +4,8 @@
         <b-card v-for="solution in solutions" :header="solution.name" :key="solution.name">
             <pre class="card-text"><code v-html='solution.highlighted'></code></pre>
         </b-card>
-        <b-card v-if='details.compilation' header="Compilation errors" header-bg-variant="primary">
-            <pre class="card-text">{{details.compilation}}</pre>
+        <b-card v-if='exercise.compilation' header="Compilation errors" header-bg-variant="primary">
+            <pre class="card-text">{{exercise.compilation}}</pre>
         </b-card>
     </b-tab>
     <b-tab :disabled='issues.length == 0' title="Issues">
@@ -57,22 +57,22 @@ import 'highlight.js/styles/solarized-light.css';
 import {mapState} from 'vuex';
 
 export default {
-    name: 'the-details',
+    name: 'exercise',
     data: () => ({}),
     computed: {
-        ...mapState(['session', 'details']),
+        ...mapState(['session', 'exercise']),
         solutions: function() {
-            let original = this.details.solutions;
+            let original = this.exercise.solutions;
             return original.map(e => ({
                 name: e.name,
                 highlighted: hljs.highlightAuto(e.content).value
             }));
         },
         issues: function() {
-            return this.details.results.filter(r => r.diffs || r.errors).sort((a, b) => a.name.localeCompare(b.name));
+            return this.exercise.results.filter(r => r.diffs || r.errors).sort((a, b) => a.name.localeCompare(b.name));
         },
         texts: function() {
-            let original = this.session.texts[this.details.exercise];
+            let original = this.session.texts[this.exercise.name];
             if (typeof original === 'undefined') return [];
             return original.map(e => ({
                 name: e.name,
@@ -80,12 +80,12 @@ export default {
             }));
         },
         caseNames: function() {
-            let original = this.session.cases[this.details.exercise];
+            let original = this.session.cases[this.exercise.name];
             if (typeof original === 'undefined') return [];
             return original.map(e => e.name).sort();
         },
         cases: function() {
-            let original = this.session.cases[this.details.exercise];
+            let original = this.session.cases[this.exercise.name];
             let cases = {};
             original.forEach(e => {
                 cases[e.name] = e;

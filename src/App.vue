@@ -1,6 +1,6 @@
 <template>
 <b-container fluid>
-    <the-navbar></the-navbar>
+    <navbar></navbar>
     <b-row>
         <b-col>
             <component :is='$store.state.current_view'></component>
@@ -10,24 +10,17 @@
 </template>
 
 <script>
-import TheNavbar from './TheNavbar.vue';
-import TheHome from './TheHome.vue';
-import TheSummary from './TheSummary.vue';
-import TheDetails from './TheDetails.vue';
+import Navbar from './Navbar.vue';
+import Home from './Home.vue';
+import Session from './Session.vue';
+import Exercise from './Exercise.vue';
 import Overview from './Overview.vue';
 import Charts from './Charts.vue';
 
 export default {
     name: 'app',
     data: () => ({}),
-    components: {
-        TheNavbar,
-        TheHome,
-        TheSummary,
-        TheDetails,
-        Overview,
-        Charts
-    }
+    components: {Navbar, Home, Session, Exercise, Overview, Charts}
 };
 </script>
 

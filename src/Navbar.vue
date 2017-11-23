@@ -22,7 +22,7 @@
 
 <script>
 export default {
-    name: 'the-navbar',
+    name: 'navbar',
     data: () => ({}),
     created() {
         this.$store.dispatch('fetch_sessions');
@@ -45,7 +45,7 @@ export default {
             }
         },
         summary: function() {
-            return this.$store.state.current_view == 'the-summary';
+            return this.$store.state.current_view == 'summary';
         },
         lock: function() {
             return this.$store.state.session.auth ? 'unlock' : 'lock';
@@ -53,7 +53,7 @@ export default {
     },
     methods: {
         click: function() {
-            this.$store.state.current_view = 'the-summary';
+            this.$store.commit('set_view', {view: 'session'});
         },
     }
 };

@@ -69,7 +69,7 @@ const STORE = new Vuex.Store({
         set_view(state, {view}) {
             state.current_view = view;
         },
-        set_sessions(state, sessions) {
+        set_sessions(state, {sessions}) {
             state.sessions = sessions;
         },
         set_overview(state, {overview, next}) {
@@ -112,7 +112,10 @@ const STORE = new Vuex.Store({
     },
     actions: {
         fetch_sessions({commit}) {
-            axios.get('r/sessions').then(sessions => commit('set_sessions', (sessions.data.sessions).sort().reverse()));
+            axios.get('r/sessions').then(sessions => {
+                sessions = (sessions.data.sessions).sort().reverse();
+                commit('set_sessions', {sessions});
+            });
         },
         fetch_overview({commit}, {next}) {
             let sessions = STORE.state.sessions;
@@ -137,7 +140,6 @@ const STORE = new Vuex.Store({
                 };
                 commit('set_overview', {overview, next});
             });
-
         },
         fetch_session({commit}, {session_id}) {
             let auth = 'WyJhbGwiXQ.7etEGZYp8yTDx4xB6QlyazXRd0A';

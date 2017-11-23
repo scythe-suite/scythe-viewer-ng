@@ -1,36 +1,40 @@
 <template>
-  <b-container fluid>
+<div class='overview'>
     <b-form-checkbox v-model='onlyseen'>Hide never seen students</b-form-checkbox>
     <b-form-checkbox v-model='justoks'>Count exercises with at least one passing case as perfect</b-form-checkbox>
     <b-table small fixed :filter='filter' :items='items' :fields='fields'></b-table>
-  </b-container>
+</div>
 </template>
 
 <script>
-import {computePercentages} from './utils.js';
+import {mapState} from 'vuex';
+import {computePercentages} from './store.js';
 
 export default {
     name: 'overview',
-    props: ['overview'],
     data: () => ({
         onlyseen: true,
         justoks: false
     }),
     methods: {
-      resultFormatter: function(value, key, item) {
-          if (value === undefined) return '';
-          let val = Math.floor(value * 100);
-          let res = `<div class="progress-bar bg-success" role="progressbar" style="width: ${val}%">${val ? val : ''}</div>`;
-          return `<div class="progress">${res}</div>`;
-      },
-      filter: function(row) {
-          return row['_TOTAL_'] !== undefined || !this.onlyseen;
-      }
+        resultFormatter: function(value) {
+            if (value === undefined) return '';
+            let val = Math.floor(value * 100);
+            let res = `<div class="progress-bar bg-success" role="progressbar" style="width: ${val}%">${val ? val : ''}</div>`;
+            return `<div class="progress">${res}</div>`;
+        },
+        filter: function(row) {
+            return row['_TOTAL_'] !== undefined || !this.onlyseen;
+        }
     },
     computed: {
+        ...mapState(['overview']),
         fields: function() {
             if (!this.overview) return [];
-            let local_fields = [{key: 'uid', sortable: true}, {key: 'info', sortable: true}];
+            let local_fields = [
+                {key: 'uid', sortable: true},
+                {key: 'info', sortable: true}
+            ];
             this.overview.sessions.forEach(
                 s => local_fields.push({
                     key: s,
@@ -61,8 +65,8 @@ export default {
 };
 </script>
 
-<style>
-body {
+<style scoped>
+.overview {
     margin-top: 1rem;
     margin-bottom: 1rem;
 }

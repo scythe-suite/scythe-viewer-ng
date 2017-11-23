@@ -1,33 +1,50 @@
 <template>
-  <b-container fluid>
-      <b-form-checkbox v-model='hidelegend'>Hide legend</b-form-checkbox>
-      <b-form-checkbox v-model='setmax'>Scale to max</b-form-checkbox>
-      <area-chart height="500px" :data="chart_data" :library="chart_options" :xtype="'number'" :xmax="100"></area-chart>
-  </b-container>
+<div class='charts'>
+    <b-form-checkbox v-model='hidelegend'>Hide legend</b-form-checkbox>
+    <b-form-checkbox v-model='setmax'>Scale to max</b-form-checkbox>
+    <area-chart height="500px" :data="chart_data" :library="chart_options" :xtype="'number'" :xmax="100"></area-chart>
+</div>
 </template>
 
 <script>
-import {computePercentages} from './utils.js';
+import Vue from 'vue';
+
+import Chartkick from 'chartkick';
+import VueChartkick from 'vue-chartkick';
+import Chart from 'chart.js'; // eslint-disable-line
+Vue.use(VueChartkick, {Chartkick});
+
+import {mapState} from 'vuex';
+import {computePercentages} from './store.js';
 
 export default {
     name: 'charts',
-    props: ['overview'],
     data: () => ({
         hidelegend: true,
         setmax: true
     }),
-    methods: {
-    },
+    methods: {},
     computed: {
+        ...mapState(['overview']),
         chart_options: function() {
-            let options =  {
-                legend: {display: !this.hidelegend},
+            let options = {
+                legend: {
+                    display: !this.hidelegend
+                },
                 //spanGaps: true,
             };
             if (!this.setmax) {
-                options.scales = {
-                    xAxes: [{ticks: {max: 100}}],
-                    yAxes: [{ticks: {max: 100}}]
+                options.scales = {
+                    xAxes: [{
+                        ticks: {
+                            max: 100
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            max: 100
+                        }
+                    }]
                 };
             }
             return options;
@@ -38,7 +55,7 @@ export default {
             //let num_uids = percentages.map(p => p['_TOTAL_']).filter(p => p!==undefined).length;
             let data = [];
             this.overview.sessions.map(s => {
-                let increasing = percentages.map(p => p[s]).filter(p => p!==undefined).sort();
+                let increasing = percentages.map(p => p[s]).filter(p => p !== undefined).sort();
                 console.log(increasing);
                 increasing.push(101);
                 let prev = increasing[0];
@@ -55,7 +72,10 @@ export default {
                     }
                 }
                 console.log(pairs);
-                data.push({name: s, data: pairs});
+                data.push({
+                    name: s,
+                    data: pairs
+                });
             });
             return data;
         }
@@ -63,8 +83,8 @@ export default {
 };
 </script>
 
-<style>
-body {
+<style scoped>
+.charts {
     margin-top: 1rem;
     margin-bottom: 1rem;
 }

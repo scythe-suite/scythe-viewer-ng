@@ -1,5 +1,5 @@
 <template>
-  <b-tabs card>
+<b-tabs card>
     <b-tab :disabled='solutions.length == 0' title="Sources" active>
         <b-card v-for="solution in solutions" :header="solution.name" :key="solution.name">
             <pre class="card-text"><code v-html='solution.highlighted'></code></pre>
@@ -13,9 +13,9 @@
             <pre v-if='issue.errors' class="card-text">{{issue.errors}}</pre>
             <div v-if='issue.diffs'>
                 <b-card-group deck>
-                  <b-card header="Expected"><pre class="card-text">{{cases[issue.name].expected}}</pre></b-card>
-                  <b-card header="Actual"><pre class="card-text">{{issue.actual}}</pre></b-card>
-                  <b-card header="Diffs"><pre class="card-text">{{issue.diffs}}</pre></b-card>
+                    <b-card header="Expected"><pre class="card-text">{{cases[issue.name].expected}}</pre></b-card>
+                    <b-card header="Actual"><pre class="card-text">{{issue.actual}}</pre></b-card>
+                    <b-card header="Diffs"><pre class="card-text">{{issue.diffs}}</pre></b-card>
                 </b-card-group>
             </div>
         </b-card>
@@ -27,39 +27,40 @@
     </b-tab>
     <b-tab :disabled='caseNames.length == 0' title="Cases">
         <b-card v-for="name in caseNames" :header="name" :key="name">
-          <b-card-group deck>
-            <b-card v-if='cases[name].input' header="Input"><pre class="card-text">{{cases[name].input}}</pre></b-card>
-            <b-card v-if='cases[name].args' header="Args"><pre class="card-text">{{cases[name].args}}</pre></b-card>
-            <b-card header="Expected"><pre class="card-text">{{cases[name].expected}}</pre></b-card>
-          </b-card-group>
+            <b-card-group deck>
+                <b-card v-if='cases[name].input' header="Input"><pre class="card-text">{{cases[name].input}}</pre></b-card>
+                <b-card v-if='cases[name].args' header="Args"><pre class="card-text">{{cases[name].args}}</pre></b-card>
+                <b-card header="Expected"><pre class="card-text">{{cases[name].expected}}</pre></b-card>
+            </b-card-group>
         </b-card>
     </b-tab>
-  </b-tabs>
+</b-tabs>
 </template>
 
 <script>
 import marked from 'marked';
 marked.setOptions({
-  renderer: new marked.Renderer(),
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: true,
-  smartLists: true,
-  smartypants: false
+    renderer: new marked.Renderer(),
+    gfm: true,
+    tables: true,
+    breaks: false,
+    pedantic: false,
+    sanitize: true,
+    smartLists: true,
+    smartypants: false
 });
 import 'github-markdown-css/github-markdown.css';
 
 import hljs from 'highlight.js';
 import 'highlight.js/styles/solarized-light.css';
 
-import STORE from './store.js';
+import {mapState} from 'vuex';
 
 export default {
     name: 'the-details',
-    data: () => ({session: STORE.session, details: STORE.details}),
+    data: () => ({}),
     computed: {
+        ...mapState(['session', 'details']),
         solutions: function() {
             let original = this.details.solutions;
             return original.map(e => ({
@@ -86,9 +87,18 @@ export default {
         cases: function() {
             let original = this.session.cases[this.details.exercise];
             let cases = {};
-            original.forEach(e => {cases[e.name] = e;});
+            original.forEach(e => {
+                cases[e.name] = e;
+            });
             return cases;
         }
     }
 };
 </script>
+
+<style scoped>
+.card {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+}
+</style>

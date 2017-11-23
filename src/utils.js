@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { uidlist2map } from './rest.js';
 
-function computePercentages(uid, overview, justoks) {
+function computePercentages(uid, overview, justoks = false) {
     let num_sessions = overview.sessions.length;
     let total = 0;
     let seen = false;

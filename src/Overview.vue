@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { computePercentages } from './utils.js';
+import {computePercentages} from './utils.js';
 
 export default {
     name: 'overview',
@@ -18,7 +18,7 @@ export default {
     }),
     methods: {
       resultFormatter: function(value, key, item) {
-          if (key == 'uid' || value === undefined) return value;
+          if (value === undefined) return '';
           let val = Math.floor(value * 100);
           let res = `<div class="progress-bar bg-success" role="progressbar" style="width: ${val}%">${val ? val : ''}</div>`;
           return `<div class="progress">${res}</div>`;

@@ -6,7 +6,8 @@ var CommonsChunkPlugin = require('webpack').optimize.CommonsChunkPlugin;
 module.exports = {
   entry: {
     app: './src/app.js',
-    overview: './src/overview.js'
+    overview: './src/overview.js',
+    charts: './src/charts.js',
   },
   plugins: [
       new CommonsChunkPlugin({
@@ -15,7 +16,7 @@ module.exports = {
       new HtmlWebpackPlugin({
           inject: false,
           template: require('html-webpack-template'),
-          title: 'Scythe Viewer',
+          title: 'Scythe Viewer - Sessions',
           appMountId: 'app',
           filename: 'index.html',
           chunks: ['app', 'common']
@@ -23,10 +24,18 @@ module.exports = {
       new HtmlWebpackPlugin({
           inject: false,
           template: require('html-webpack-template'),
-          title: 'Scythe Overview',
+          title: 'Scythe Viewer - Overview',
           appMountId: 'app',
           filename: 'overview.html',
           chunks: ['overview', 'common']
+      }),
+      new HtmlWebpackPlugin({
+          inject: false,
+          template: require('html-webpack-template'),
+          title: 'Scythe Viewer - Charts',
+          appMountId: 'app',
+          filename: 'charts.html',
+          chunks: ['charts', 'common']
       }),
   ],
   output: {

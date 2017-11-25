@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 var path = require('path');
 var webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -25,13 +27,11 @@ module.exports = {
         filename: '[name].js'
     },
     module: {
-        rules: [{
+        rules: [
+            {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                options: {
-                    loaders: {}
-                    // other vue-loader options go here
-                }
+                options: {loaders: {}}
             },
             {
                 test: /\.js$/,
@@ -41,19 +41,11 @@ module.exports = {
             {
                 test: /\.(png|jpg|gif|svg)$/,
                 loader: 'file-loader',
-                options: {
-                    name: '[name].[ext]?[hash]'
-                }
+                options: {name: '[name].[ext]?[hash]'}
             },
             {
                 test: /\.css$/,
-                use: [{
-                        loader: "style-loader"
-                    },
-                    {
-                        loader: "css-loader"
-                    }
-                ]
+                use: [{loader: 'style-loader'}, {loader: 'css-loader'}]
             }
         ]
     },
@@ -79,10 +71,10 @@ module.exports = {
         hints: false
     },
     devtool: '#eval-source-map'
-}
+};
 
 if (process.env.NODE_ENV === 'production') {
-    module.exports.devtool = '#source-map'
+    module.exports.devtool = '#source-map';
     // http://vue-loader.vuejs.org/en/workflow/production.html
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
@@ -99,5 +91,5 @@ if (process.env.NODE_ENV === 'production') {
         new webpack.LoaderOptionsPlugin({
             minimize: true
         })
-    ])
+    ]);
 }

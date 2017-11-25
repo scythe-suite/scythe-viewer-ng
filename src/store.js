@@ -42,10 +42,14 @@ function computePercentages(uid, overview, justoks = false) {
 
 const STORE = new Vuex.Store({
     state: {
-        current_view: 'home',
         load: 0,
         sessions: [],
-        overview: {},
+        overview: {
+            sessions: null,
+            uids: {},
+            exercises: {},
+            summaries: {}
+        },
         session: { // predeclared for mutation detection
             id: null, // a string
             auth: null, // a string
@@ -66,26 +70,34 @@ const STORE = new Vuex.Store({
         }
     },
     mutations: {
-        set_view(state, {view}) {
-            state.current_view = view;
-        },
         set_sessions(state, {sessions}) {
+            if (DEBUG) {
+                console.log('set_sessions');
+                console.log(sessions);
+            }
             state.sessions = sessions;
         },
-        set_overview(state, {overview, next}) {
-            if (DEBUG) console.log(overview);
+        set_overview(state, {overview}) {
+            if (DEBUG) {
+                console.log('set_overview');
+                console.log(overview);
+            }
             Object.assign(state.overview, overview);
-            state.current_view = next;
         },
         set_session(state, {session, exercise}) {
+            if (DEBUG) {
+                console.log('set_state');
+                console.log(state);
+            }
             Object.assign(state.session, session);
             Object.assign(state.exercise, exercise);
-            state.current_view = 'session';
         },
         set_exercise(state, {exercise}) {
-            if (DEBUG) console.log(exercise);
+            if (DEBUG) {
+                console.log('set_exercise');
+                console.log(exercise);
+            }
             Object.assign(state.exercise, exercise);
-            state.current_view = 'exercise';
         },
         SOCKET_LOAD_MESSAGE(state, {load}) {
             if (DEBUG) {
@@ -117,36 +129,35 @@ const STORE = new Vuex.Store({
                 commit('set_sessions', {sessions});
             });
         },
-        fetch_overview({commit}, {next}) {
-            let sessions = STORE.state.sessions;
-            let gets = [];
-            sessions.map(session_id => {gets.push(axios.all([
-                axios.get(`r/uids/${session_id}`),
-                axios.get(`r/exercises/${session_id}`),
-                axios.get(`r/summaries/${session_id}`)
-            ]));});
-            let uids = {}, exercises = {}, summaries = {};
-            axios.all(gets).then(function(data) {
-                for (let i = 0; i < sessions.length; i++) {
-                    Object.assign(uids, uidlist2map(data[i][0].data.uids));
-                    exercises[sessions[i]] = data[i][1].data.exercises;
-                    summaries[sessions[i]] = data[i][2].data.summaries;
-                }
-                let overview = {
-                    sessions: sessions,
-                    uids: uids,
-                    exercises: exercises,
-                    summaries: summaries
-                };
-                commit('set_overview', {overview, next});
+        fetch_overview({commit}) {
+            if (STORE.state.overview.sessions) return;
+            axios.get('r/sessions').then(sessions => {
+                sessions = (sessions.data.sessions).sort().reverse();
+                let gets = [];
+                sessions.map(session_id => {gets.push(axios.all([
+                    axios.get(`r/uids/${session_id}`),
+                    axios.get(`r/exercises/${session_id}`),
+                    axios.get(`r/summaries/${session_id}`)
+                ]));});
+                let uids = {}, exercises = {}, summaries = {};
+                axios.all(gets).then(function(data) {
+                    for (let i = 0; i < sessions.length; i++) {
+                        Object.assign(uids, uidlist2map(data[i][0].data.uids));
+                        exercises[sessions[i]] = data[i][1].data.exercises;
+                        summaries[sessions[i]] = data[i][2].data.summaries;
+                    }
+                    let overview = {
+                        sessions: sessions,
+                        uids: uids,
+                        exercises: exercises,
+                        summaries: summaries
+                    };
+                    commit('set_overview', {overview});
+                });
             });
         },
-        fetch_session({commit}, {session_id}) {
-            let auth = 'WyJhbGwiXQ.7etEGZYp8yTDx4xB6QlyazXRd0A';
-            // if (session_id == STORE.session.id && auth && auth == STORE.session.auth) {
-            //     STORE.current_view = 'the-summary';
-            //     return;
-            // }
+        fetch_session({commit}, {session_id, auth, next}) {
+            if (session_id == STORE.state.session.id && auth && auth == STORE.state.session.auth) return;
             let qauth = auth ? `?auth=${auth}` : '';
             axios.all([
                 axios.get(`r/uids/${session_id}`),
@@ -177,15 +188,13 @@ const STORE = new Vuex.Store({
                     results: []
                 };
                 commit('set_session', {session, exercise});
+                if (next) next(); // to chain fetch_exercise
             }));
         },
         fetch_exercise({commit}, {uid, timestamp, exercise_name}) {
-            // if (uid == STORE.details.uid && timestamp == STORE.details.timestamp && exercise == STORE.details.exercise) {
-            //     STORE.current_view = 'the-details';
-            //     return;
-            // }
-            let qauth = STORE.state.session.auth ? `?auth=${STORE.state.session.auth}` : '';
+            if (uid == STORE.state.exercise.uid && timestamp == STORE.state.exercise.timestamp && exercise_name == STORE.state.exercise.name) return;
             let session_id = STORE.state.session.id;
+            let qauth = STORE.state.session.auth ? `?auth=${STORE.state.session.auth}` : '';
             axios.all([
                 axios.get(`r/solutions/${session_id}/${uid}/${timestamp}/${exercise_name}${qauth}`).catch(() => {}),
                 axios.get(`r/results/${session_id}/${uid}/${timestamp}/${exercise_name}${qauth}`).catch(() => {}),

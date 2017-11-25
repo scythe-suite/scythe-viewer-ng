@@ -5,20 +5,11 @@ var CommonsChunkPlugin = require('webpack').optimize.CommonsChunkPlugin;
 
 module.exports = {
     entry: {
-        routed: './src/routed.js',
         app: './src/app.js',
     },
     plugins: [
         new CommonsChunkPlugin({
             name: 'common'
-        }),
-        new HtmlWebpackPlugin({
-            inject: false,
-            template: require('html-webpack-template'),
-            title: 'Scythe Viewer - Routed Sessions',
-            appMountId: 'app',
-            filename: 'routed.html',
-            chunks: ['routed', 'common']
         }),
         new HtmlWebpackPlugin({
             inject: false,

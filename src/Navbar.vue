@@ -2,9 +2,9 @@
 <b-navbar toggleable type="dark" variant="info">
     <b-navbar-brand href="#">Scythe Viewer</b-navbar-brand>
     <b-navbar-nav>
-        <b-nav-item v-if='$store.state.session.auth' href="#" @click='click' :disabled='summary'>Summary</b-nav-item>
-        <b-nav-item href="#" @click='$store.dispatch("fetch_overview", {next: "overview"})'>Overview</b-nav-item>
-        <b-nav-item href="#" @click='$store.dispatch("fetch_overview", {next: "charts"})'>Charts</b-nav-item>
+        <b-nav-item :to="{name: 'overview'}">Overview</b-nav-item>
+        <b-nav-item :to="{name: 'charts'}">Charts</b-nav-item>
+        <b-nav-item v-if="sessionTo" :to="sessionTo">Session</b-nav-item>
         <b-nav-text>
             <icon :name='lock'></icon>
         </b-nav-text>
@@ -23,39 +23,33 @@
 <script>
 export default {
     name: 'navbar',
-    data: () => ({}),
     created() {
         this.$store.dispatch('fetch_sessions');
     },
+    methods: {
+    },
     computed: {
         options() {
-            return this.$store.state.sessions.map(s => ({
-                value: s,
-                text: s
-            }));
+            return this.$store.state.sessions.map(s => ({value: s, text: s}));
         },
         selected: {
-            get: function() {
+            get() {
                 return this.$store.state.session.id;
             },
-            set: function(session_id) {
-                if (session_id != this.$store.state.session.id) this.$store.dispatch('fetch_session', {
-                    session_id
-                });
+            set(session_id) {
+                if (this.$store.state.session.id != session_id) // to prevent rest when coming with complete URL
+                    this.$router.push({name: 'session', params: {session_id}});
             }
         },
-        summary: function() {
-            return this.$store.state.current_view == 'summary';
+        sessionTo() {
+            let session_id = this.$store.state.session.id;
+            if (session_id) return {name: 'session', params: {session_id, auth: this.$store.state.session.auth}};
+            return null;
         },
-        lock: function() {
+        lock() {
             return this.$store.state.session.auth ? 'unlock' : 'lock';
         }
     },
-    methods: {
-        click: function() {
-            this.$store.commit('set_view', {view: 'session'});
-        },
-    }
 };
 </script>
 

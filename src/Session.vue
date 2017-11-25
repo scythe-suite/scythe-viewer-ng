@@ -11,8 +11,18 @@ import {mapState} from 'vuex';
 
 export default {
     name: 'session',
+    props: ['session_id', 'auth'],
     data: () => ({}),
+    created () {
+        this.fetchData();
+    },
+    watch: {
+        '$route': 'fetchData'
+    },
     methods: {
+        fetchData() {
+            this.$store.dispatch('fetch_session', {session_id: this.session_id, auth: this.auth});
+        },
         customSort: function(a, b, key) {
             if (key == 'uid' || key == 'info' || key == 'timestamp') return null; // resort to default sort
             a = a[key];
@@ -32,9 +42,9 @@ export default {
             if (!(event.target && event.target.parentNode && event.target.parentNode.parentNode)) return;
             let cellIndex = event.target.parentNode.parentNode.cellIndex;
             let idx = cellIndex - 3; // this is the number of columns not including exercises
-            let exercise = this.session.exercises[idx];
-            if (!exercise) return;
-            this.$store.dispatch('fetch_exercise', {uid: item.uid, timestamp: item.timestamp, exercise_name: exercise});
+            let exercise_name = this.session.exercises[idx];
+            if (!exercise_name) return;
+            this.$router.push({name: 'exercise', params: {session_id: this.session.id, auth: this.session.auth, uid: item.uid, timestamp: item.timestamp, exercise_name}});
         },
         resultFormatter: function(value, key) {
             if (!this.session.casenum[key]) return value;

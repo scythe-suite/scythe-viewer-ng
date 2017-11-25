@@ -58,7 +58,24 @@ import {mapState} from 'vuex';
 
 export default {
     name: 'exercise',
+    props: ['session_id', 'auth', 'uid', 'timestamp', 'exercise_name'],
     data: () => ({}),
+    created () {
+        this.fetchData();
+    },
+    watch: {
+        '$route': 'fetchData'
+    },
+    methods: {
+        fetchData() {
+            let fe = () => this.$store.dispatch('fetch_exercise',
+                {uid: this.uid, timestamp: this.timestamp, exercise_name: this.exercise_name}
+            );
+            if (this.session_id != this.$store.state.session.id || this.auth != this.$store.state.session.auth)
+                this.$store.dispatch('fetch_session', {session_id: this.session_id, auth: this.auth, next: fe});
+            else fe();
+        },
+    },
     computed: {
         ...mapState(['session', 'exercise']),
         solutions: function() {

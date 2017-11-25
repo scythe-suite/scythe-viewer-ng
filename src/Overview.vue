@@ -16,7 +16,16 @@ export default {
         onlyseen: true,
         justoks: false
     }),
+    created() {
+        this.fetchData();
+    },
+    watch: {
+        '$route': 'fetchData'
+    },
     methods: {
+        fetchData() {
+            this.$store.dispatch('fetch_overview');
+        },
         resultFormatter: function(value) {
             if (value === undefined) return '';
             let val = Math.floor(value * 100);
@@ -30,7 +39,7 @@ export default {
     computed: {
         ...mapState(['overview']),
         fields: function() {
-            if (!this.overview) return [];
+            if (!this.overview.sessions) return [];
             let local_fields = [
                 {key: 'uid', sortable: true},
                 {key: 'info', sortable: true}
@@ -52,7 +61,7 @@ export default {
             return local_fields;
         },
         items: function() {
-            if (!this.overview) return [];
+            if (!this.overview.sessions) return [];
             let local_items = [];
             Object.keys(this.overview.uids).sort().forEach(uid => {
                 let row = {uid: uid, info: this.overview.uids[uid].info};

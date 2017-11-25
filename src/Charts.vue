@@ -23,7 +23,17 @@ export default {
         hidelegend: true,
         setmax: true
     }),
-    methods: {},
+    created() {
+        this.fetchData();
+    },
+    watch: {
+        '$route': 'fetchData'
+    },
+    methods: {
+        fetchData() {
+            this.$store.dispatch('fetch_overview');
+        }
+    },
     computed: {
         ...mapState(['overview']),
         chart_options: function() {
@@ -35,28 +45,19 @@ export default {
             };
             if (!this.setmax) {
                 options.scales = {
-                    xAxes: [{
-                        ticks: {
-                            max: 100
-                        }
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            max: 100
-                        }
-                    }]
+                    xAxes: [{ticks: {max: 100}}],
+                    yAxes: [{ticks: {max: 100}}]
                 };
             }
             return options;
         },
         chart_data: function() {
-            if (!this.overview) return {};
+            if (!this.overview.sessions) return {};
             let percentages = Object.keys(this.overview.uids).map(uid => computePercentages(uid, this.overview));
             //let num_uids = percentages.map(p => p['_TOTAL_']).filter(p => p!==undefined).length;
             let data = [];
             this.overview.sessions.map(s => {
                 let increasing = percentages.map(p => p[s]).filter(p => p !== undefined).sort();
-                console.log(increasing);
                 increasing.push(101);
                 let prev = increasing[0];
                 let num = 0;
@@ -71,11 +72,7 @@ export default {
                         prev = increasing[i];
                     }
                 }
-                console.log(pairs);
-                data.push({
-                    name: s,
-                    data: pairs
-                });
+                data.push({name: s, data: pairs});
             });
             return data;
         }

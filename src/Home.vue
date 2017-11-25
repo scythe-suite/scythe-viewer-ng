@@ -1,5 +1,5 @@
 <template>
 <b-alert show variant="warning">
-    You should select a session from the right dropdown, or have a session id in your URL!
+    Select a session from the right dropdown, otherwise check the overview, or the charts.
 </b-alert>
 </template>

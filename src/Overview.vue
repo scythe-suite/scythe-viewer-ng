@@ -40,10 +40,9 @@ export default {
         ...mapState(['overview']),
         fields: function() {
             if (!this.overview.sessions) return [];
-            let local_fields = [
-                {key: 'uid', sortable: true},
-                {key: 'info', sortable: true}
-            ];
+            let local_fields = [{key: 'uid', sortable: true}];
+            if (this.$store.state.session.auth)
+                local_fields.push({key: 'info', sortable: true});
             this.overview.sessions.forEach(
                 s => local_fields.push({
                     key: s,

@@ -14,7 +14,7 @@ import VueChartkick from 'vue-chartkick';
 import Chart from 'chart.js'; // eslint-disable-line
 Vue.use(VueChartkick, {Chartkick});
 
-import {mapState} from 'vuex';
+import {mapState, mapGetters} from 'vuex';
 import {computePercentages} from './store.js';
 
 export default {
@@ -31,11 +31,14 @@ export default {
     },
     methods: {
         fetchData() {
-            this.$store.dispatch('fetch_overview');
+            let next = () => this.$store.dispatch('fetch_overview');
+            if (this.sessions.length) next();
+            else this.$store.dispatch('fetch_sessions', next);
         }
     },
     computed: {
         ...mapState(['overview']),
+        ...mapGetters(['sessions', 'percentage']),
         chart_options: function() {
             let options = {
                 legend: {
@@ -52,11 +55,11 @@ export default {
             return options;
         },
         chart_data: function() {
-            if (!this.overview.sessions) return {};
-            let percentages = Object.keys(this.overview.uids).map(uid => computePercentages(uid, this.overview));
+            if (!this.sessions) return {};
+            let percentages = Object.keys(this.overview.uids).map(uid => this.percentage(uid));
             //let num_uids = percentages.map(p => p['_TOTAL_']).filter(p => p!==undefined).length;
             let data = [];
-            this.overview.sessions.map(s => {
+            this.sessions.map(s => {
                 let increasing = percentages.map(p => p[s]).filter(p => p !== undefined).sort();
                 increasing.push(101);
                 let prev = increasing[0];

@@ -68,12 +68,12 @@ export default {
     },
     methods: {
         fetchData() {
-            let fe = () => this.$store.dispatch('fetch_exercise',
+            let next = () => this.$store.dispatch('fetch_exercise',
                 {uid: this.uid, timestamp: this.timestamp, exercise_name: this.exercise_name}
             );
             if (this.session_id != this.$store.state.session.id || this.auth != this.$store.state.session.auth)
-                this.$store.dispatch('fetch_session', {session_id: this.session_id, auth: this.auth, next: fe});
-            else fe();
+                this.$store.dispatch('fetch_session', {session_id: this.session_id, auth: this.auth, next});
+            else next();
         },
     },
     computed: {

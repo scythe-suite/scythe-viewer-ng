@@ -7,8 +7,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
-import {computePercentages} from './store.js';
+import {mapState, mapGetters} from 'vuex';
 
 export default {
     name: 'overview',
@@ -24,7 +23,9 @@ export default {
     },
     methods: {
         fetchData() {
-            this.$store.dispatch('fetch_overview');
+            let next = () => this.$store.dispatch('fetch_overview');
+            if (this.sessions.length) next();
+            else this.$store.dispatch('fetch_sessions', next);
         },
         resultFormatter: function(value) {
             if (value === undefined) return '';
@@ -38,12 +39,13 @@ export default {
     },
     computed: {
         ...mapState(['overview']),
+        ...mapGetters(['sessions', 'percentage']),
         fields: function() {
-            if (!this.overview.sessions) return [];
+            if (!this.sessions) return [];
             let local_fields = [{key: 'uid', sortable: true}];
             if (this.$store.state.session.auth)
                 local_fields.push({key: 'info', sortable: true});
-            this.overview.sessions.forEach(
+            this.sessions.forEach(
                 s => local_fields.push({
                     key: s,
                     label: s,
@@ -60,11 +62,11 @@ export default {
             return local_fields;
         },
         items: function() {
-            if (!this.overview.sessions) return [];
+            if (!this.sessions) return [];
             let local_items = [];
             Object.keys(this.overview.uids).sort().forEach(uid => {
                 let row = {uid: uid, info: this.overview.uids[uid].info};
-                Object.assign(row, computePercentages(uid, this.overview, this.justoks));
+                Object.assign(row, this.percentage(uid, this.justoks));
                 local_items.push(row);
             });
             return local_items;

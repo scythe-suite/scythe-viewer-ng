@@ -21,33 +21,37 @@
 </template>
 
 <script>
+import {mapState, mapGetters} from 'vuex';
+
 export default {
     name: 'navbar',
     created() {
-        this.$store.dispatch('fetch_sessions');
+        if (!this.sessions.length) this.$store.dispatch('fetch_sessions');
     },
     methods: {
     },
     computed: {
+        ...mapState(['session']),
+        ...mapGetters(['sessions']),
         options() {
-            return this.$store.state.sessions.map(s => ({value: s, text: s}));
+            return this.sessions.map(s => ({value: s, text: s}));
         },
         selected: {
             get() {
-                return this.$store.state.session.id;
+                return this.session.id;
             },
             set(session_id) {
-                if (this.$store.state.session.id != session_id) // to prevent rest when coming with complete URL
+                if (this.session.id != session_id) // to prevent rest when coming with complete URL
                     this.$router.push({name: 'session', params: {session_id}});
             }
         },
         sessionTo() {
-            let session_id = this.$store.state.session.id;
-            if (session_id) return {name: 'session', params: {session_id, auth: this.$store.state.session.auth}};
+            let session_id = this.session.id;
+            if (session_id) return {name: 'session', params: {session_id, auth: this.session.auth}};
             return null;
         },
         lock() {
-            return this.$store.state.session.auth ? 'unlock' : 'lock';
+            return this.session.auth ? 'unlock' : 'lock';
         }
     },
 };

@@ -16,7 +16,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             inject: false,
             template: require('html-webpack-template'),
-            title: 'Scythe Viewer - Sessions',
+            title: 'Scythe Viewer',
             appMountId: 'app',
             filename: 'index.html',
             chunks: ['app', 'common']

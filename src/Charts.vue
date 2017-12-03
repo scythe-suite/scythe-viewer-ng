@@ -1,31 +1,50 @@
 <template>
-  <b-container fluid>
-      <b-form-checkbox v-model='hidelegend'>Hide legend</b-form-checkbox>
-      <b-form-checkbox v-model='setmax'>Scale to max</b-form-checkbox>
-      <area-chart height="500px" :data="chart_data" :library="chart_options" :xtype="'number'" :xmax="100"></area-chart>
-  </b-container>
+<div class='charts'>
+    <b-form-checkbox v-model='hidelegend'>Hide legend</b-form-checkbox>
+    <b-form-checkbox v-model='setmax'>Scale to max</b-form-checkbox>
+    <area-chart height="500px" :data="chart_data" :library="chart_options" :xtype="'number'" :xmax="100"></area-chart>
+</div>
 </template>
 
 <script>
-import {computePercentages} from './utils.js';
+import Vue from 'vue';
+
+import Chartkick from 'chartkick';
+import VueChartkick from 'vue-chartkick';
+import Chart from 'chart.js'; // eslint-disable-line
+Vue.use(VueChartkick, {Chartkick});
+
+import {mapState, mapGetters} from 'vuex';
 
 export default {
     name: 'charts',
-    props: ['overview'],
     data: () => ({
         hidelegend: true,
         setmax: true
     }),
+    created() {
+        this.fetchData();
+    },
+    watch: {
+        '$route': 'fetchData'
+    },
     methods: {
+        fetchData() {
+            this.$store.dispatch('fetch_overview');
+        }
     },
     computed: {
+        ...mapState(['overview']),
+        ...mapGetters(['sessions', 'percentage']),
         chart_options: function() {
-            let options =  {
-                legend: {display: !this.hidelegend},
+            let options = {
+                legend: {
+                    display: !this.hidelegend
+                },
                 //spanGaps: true,
             };
             if (!this.setmax) {
-                options.scales = {
+                options.scales = {
                     xAxes: [{ticks: {max: 100}}],
                     yAxes: [{ticks: {max: 100}}]
                 };
@@ -33,13 +52,12 @@ export default {
             return options;
         },
         chart_data: function() {
-            if (!this.overview) return {};
-            let percentages = Object.keys(this.overview.uids).map(uid => computePercentages(uid, this.overview));
+            if (!this.sessions) return {};
+            let percentages = Object.keys(this.overview.uids).map(uid => this.percentage(uid));
             //let num_uids = percentages.map(p => p['_TOTAL_']).filter(p => p!==undefined).length;
             let data = [];
-            this.overview.sessions.map(s => {
-                let increasing = percentages.map(p => p[s]).filter(p => p!==undefined).sort();
-                console.log(increasing);
+            this.sessions.map(s => {
+                let increasing = percentages.map(p => p[s]).filter(p => p !== undefined).sort();
                 increasing.push(101);
                 let prev = increasing[0];
                 let num = 0;
@@ -54,7 +72,6 @@ export default {
                         prev = increasing[i];
                     }
                 }
-                console.log(pairs);
                 data.push({name: s, data: pairs});
             });
             return data;
@@ -63,8 +80,8 @@ export default {
 };
 </script>
 
-<style>
-body {
+<style scoped>
+.charts {
     margin-top: 1rem;
     margin-bottom: 1rem;
 }

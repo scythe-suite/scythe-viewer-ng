@@ -62,7 +62,7 @@ const router = new VueRouter({routes: [
     },
     {
         name: 'exercise',
-        path: '/exercise/:session_id/:uid/:timestamp/:exercise_name/:auth?',
+        path: '/exercise/:session_id/:uid/:timestamp/:exercise_name',
         components: {navbar: Navbar, detail: Exercise},
         props: {detail: true}
     },

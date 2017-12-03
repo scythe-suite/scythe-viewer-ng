@@ -31,7 +31,7 @@ export default {
     methods: {
     },
     computed: {
-        ...mapState(['session']),
+        ...mapState(['session', 'session2auth']),
         ...mapGetters(['sessions']),
         options() {
             return this.sessions.map(s => ({value: s, text: s}));
@@ -47,11 +47,11 @@ export default {
         },
         sessionTo() {
             let session_id = this.session.id;
-            if (session_id) return {name: 'session', params: {session_id, auth: this.session.auth}};
+            if (session_id) return {name: 'session', params: {session_id}};
             return null;
         },
         lock() {
-            return this.session.auth ? 'unlock' : 'lock';
+            return this.session2auth[this.session.id] ? 'unlock' : 'lock';
         }
     },
 };

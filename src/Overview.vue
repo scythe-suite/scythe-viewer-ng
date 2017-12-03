@@ -23,9 +23,7 @@ export default {
     },
     methods: {
         fetchData() {
-            let next = () => this.$store.dispatch('fetch_overview');
-            if (this.sessions.length) next();
-            else this.$store.dispatch('fetch_sessions', next);
+            this.$store.dispatch('fetch_overview');
         },
         resultFormatter: function(value) {
             if (value === undefined) return '';

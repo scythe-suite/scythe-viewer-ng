@@ -15,7 +15,6 @@ import Chart from 'chart.js'; // eslint-disable-line
 Vue.use(VueChartkick, {Chartkick});
 
 import {mapState, mapGetters} from 'vuex';
-import {computePercentages} from './store.js';
 
 export default {
     name: 'charts',
@@ -31,9 +30,7 @@ export default {
     },
     methods: {
         fetchData() {
-            let next = () => this.$store.dispatch('fetch_overview');
-            if (this.sessions.length) next();
-            else this.$store.dispatch('fetch_sessions', next);
+            this.$store.dispatch('fetch_overview');
         }
     },
     computed: {

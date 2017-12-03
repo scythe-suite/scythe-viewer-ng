@@ -19,17 +19,20 @@ function uidlist2map(lst) {
 const STORAGE_AUTH_KEY = 'svng_auths';
 
 const localStoragePlugin = store => {
-    store.subscribe(({type}, {session}) => {
-        if (type === 'set_session')
-            console.log(session.auth);
-        //window.localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    store.subscribe(({type}, state) => {
+        if (type === 'set_auth') {
+            // let session2auth = window.localStorage.getItem(STORAGE_AUTH_KEY);
+            // session2auth = session2auth ? JSON.parse(session2auth) : {};
+            // Object.assign(session2auth, state.session2auth);
+            window.localStorage.setItem(STORAGE_AUTH_KEY, JSON.stringify(state.session2auth));
+        }
     });
 };
 
 const STORE = new Vuex.Store({
     state: {
         load: 0,
-        session2auth: null,
+        session2auth: {},
         overview: {
             uids: {},
             exercises: {},
@@ -55,7 +58,7 @@ const STORE = new Vuex.Store({
     },
     getters: {
         sessions(state) {
-            return state.session2auth != null ? Object.keys(state.session2auth).sort() : [];
+            return Object.keys(state.session2auth).sort();
         },
         percentage: (state, getters) => (uid, justoks = false) => {
             let sessions = getters.sessions;
@@ -86,6 +89,9 @@ const STORE = new Vuex.Store({
         set_session2auth(state, {session2auth}) {
             state.session2auth = session2auth;
         },
+        set_auth(state, {session_id, auth}) {
+            Vue.set(state.session2auth, session_id, auth);
+        },
         set_overview(state, {overview}) {
             Object.assign(state.overview, overview);
         },
@@ -114,15 +120,25 @@ const STORE = new Vuex.Store({
     actions: {
         fetch_sessions({commit}, next) {
             axios.get('r/sessions').then(sessions => {
-                let ls = window.localStorage.getItem(STORAGE_AUTH_KEY);
-                ls = ls ? JSON.decode(ls) : {};
+                let sa = this.state.session2auth;
+                let la = window.localStorage.getItem(STORAGE_AUTH_KEY);
+                la = la ? JSON.parse(la) : {};
                 let session2auth = {};
-                for (let s of sessions.data.sessions) session2auth[s] = ls[s];
+                for (let s of sessions.data.sessions) {
+                    if (sa[s]) session2auth[s] = sa[s];
+                    else if (la[s]) session2auth[s] = la[s];
+                    else session2auth[s] = null;
+                }
                 commit('set_session2auth', {session2auth});
                 if (next) next(); // to chain fetch_overview
             });
         },
-        fetch_overview({commit}) {
+        fetch_overview() {
+            let next = () => this.dispatch('fetch_just_overview');
+            if (this.getters.sessions.length) next();
+            else this.dispatch('fetch_sessions', next);
+        },
+        fetch_just_overview({commit}) {
             let gets = [];
             let sessions = this.getters.sessions;
             sessions.map(session_id => {gets.push(axios.all([
@@ -145,8 +161,14 @@ const STORE = new Vuex.Store({
                 commit('set_overview', {overview});
             });
         },
-        fetch_session({commit}, {session_id, auth, next}) {
-            if (session_id == this.state.session.id && auth && auth == this.state.session.auth) return;
+        fetch_session({commit}, {session_id}) { // eslint-disable-line no-unused-vars
+            let next = () => this.dispatch('fetch_just_session', {session_id});
+            if (this.getters.sessions.length) next();
+            else this.dispatch('fetch_sessions', next);
+        },
+        fetch_just_session({commit}, {session_id, next}) {
+            if (session_id == this.state.session.id) return;
+            let auth = this.state.session2auth[session_id];
             let qauth = auth ? `?auth=${auth}` : '';
             axios.all([
                 axios.get(`r/uids/${session_id}`),
@@ -179,10 +201,21 @@ const STORE = new Vuex.Store({
                 if (next) next(); // to chain fetch_exercise
             }));
         },
-        fetch_exercise({commit}, {uid, timestamp, exercise_name}) {
+        fetch_exercise({commit}, {session_id, uid, timestamp, exercise_name}) { // eslint-disable-line no-unused-vars
+            let next = () => {
+                let next = () => this.dispatch('fetch_just_exercise', {uid, timestamp, exercise_name});
+                console.log(this.state.session.id == session_id);
+                if (this.state.session.id == session_id) next();
+                else this.dispatch('fetch_just_session', {session_id, next: next});
+            };
+            if (this.getters.sessions.length) next();
+            else this.dispatch('fetch_sessions', next);
+        },
+        fetch_just_exercise({commit}, {uid, timestamp, exercise_name}) {
             if (uid == this.state.exercise.uid && timestamp == this.state.exercise.timestamp && exercise_name == this.state.exercise.name) return;
             let session_id = this.state.session.id;
-            let qauth = this.state.session.auth ? `?auth=${this.state.session.auth}` : '';
+            let auth = this.state.session2auth[session_id];
+            let qauth = auth ? `?auth=${auth}` : '';
             axios.all([
                 axios.get(`r/solutions/${session_id}/${uid}/${timestamp}/${exercise_name}${qauth}`).catch(() => {}),
                 axios.get(`r/results/${session_id}/${uid}/${timestamp}/${exercise_name}${qauth}`).catch(() => {}),

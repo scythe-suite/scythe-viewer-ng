@@ -34,7 +34,7 @@ export default {
         ...mapState(['session', 'session2auth']),
         ...mapGetters(['sessions']),
         options() {
-            return this.sessions.map(s => ({value: s, text: s}));
+            return this.sessions.reverse().map(s => ({value: s, text: s}));
         },
         selected: {
             get() {

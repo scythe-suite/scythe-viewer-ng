@@ -89,8 +89,9 @@ export default {
             let summaries = this.session.summaries;
             let local_items = [];
             for (let uid in summaries) {
+                if (uid == '000000') continue;
                 let entry = summaries[uid];
-                let info = this.session.uids[uid].info;
+                let info = this.session.uids[uid] ? this.session.uids[uid].info : '';
                 local_items.push(Object.assign({
                     uid: uid,
                     info: info,

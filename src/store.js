@@ -21,10 +21,10 @@ const STORAGE_AUTH_KEY = 'svng_auths';
 const localStoragePlugin = store => {
     store.subscribe(({type}, state) => {
         if (type === 'set_auth') {
-            // let session2auth = window.localStorage.getItem(STORAGE_AUTH_KEY);
-            // session2auth = session2auth ? JSON.parse(session2auth) : {};
-            // Object.assign(session2auth, state.session2auth);
-            window.localStorage.setItem(STORAGE_AUTH_KEY, JSON.stringify(state.session2auth));
+            let session2auth = window.localStorage.getItem(STORAGE_AUTH_KEY);
+            session2auth = session2auth ? JSON.parse(session2auth) : {};
+            Object.assign(session2auth, state.session2auth);
+            window.localStorage.setItem(STORAGE_AUTH_KEY, JSON.stringify(session2auth));
         }
     });
 };

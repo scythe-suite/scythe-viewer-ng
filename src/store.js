@@ -204,7 +204,6 @@ const STORE = new Vuex.Store({
         fetch_exercise({commit}, {session_id, uid, timestamp, exercise_name}) { // eslint-disable-line no-unused-vars
             let next = () => {
                 let next = () => this.dispatch('fetch_just_exercise', {uid, timestamp, exercise_name});
-                console.log(this.state.session.id == session_id);
                 if (this.state.session.id == session_id) next();
                 else this.dispatch('fetch_just_session', {session_id, next: next});
             };

@@ -144,14 +144,14 @@ const STORE = new Vuex.Store({
             sessions.map(session_id => {gets.push(axios.all([
                 axios.get(`r/uids/${session_id}`),
                 axios.get(`r/exercises/${session_id}`),
-                axios.get(`r/summaries/${session_id}`)
+                axios.get(`r/summaries/${session_id}`).catch(() => {})
             ]));});
             let uids = {}, exercises = {}, summaries = {};
             axios.all(gets).then(function(data) {
                 for (let i = 0; i < sessions.length; i++) {
                     Object.assign(uids, uidlist2map(data[i][0].data.uids));
                     exercises[sessions[i]] = data[i][1].data.exercises;
-                    summaries[sessions[i]] = data[i][2].data.summaries;
+                    summaries[sessions[i]] = data[i][2] ? data[i][2].data.summaries : {};
                 }
                 let overview = {
                     uids: uids,
@@ -173,7 +173,7 @@ const STORE = new Vuex.Store({
             axios.all([
                 axios.get(`r/uids/${session_id}`),
                 axios.get(`r/exercises/${session_id}`),
-                axios.get(`r/summaries/${session_id}`),
+                axios.get(`r/summaries/${session_id}${qauth}`).catch(() => {}),
                 axios.get(`r/texts/${session_id}${qauth}`).catch(() => {}),
                 axios.get(`r/cases/${session_id}${qauth}`).catch(() => {})
             ]).catch(function(error) {

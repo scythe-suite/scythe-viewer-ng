@@ -41,6 +41,7 @@ const STORE = new Vuex.Store({
         session: {
             id: null, // a string
             summaries: {}, // map from uids to summary objects
+            private: false, // tell if we are forbidden to show summaries
             texts: {}, // map from exercise name to an array of text objects
             cases: {}, // map from exercise name to an array of case objects
             uids: [], // map from uids to uid objects
@@ -107,6 +108,7 @@ const STORE = new Vuex.Store({
         },
         SOCKET_SUMMARY_MESSAGE(state, {summary}) {
             if (summary.session_id != state.session.id) return;
+            if (state.session.private) return;
             let payload = {
                 timestamp: summary.timestamp,
                 summary: summary.summary
@@ -186,6 +188,7 @@ const STORE = new Vuex.Store({
                     exercises: Object.keys(exe2num).sort(),
                     casenum: exe2num,
                     summaries: summaries ? summaries.data.summaries : {},
+                    private: summaries ? false : true,
                     texts: texts ? texts.data.texts : {},
                     cases: cases ? cases.data.cases : {}
                 };

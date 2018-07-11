@@ -1,40 +1,30 @@
 <template>
-<div class='overview'>
+  <div class='overview'>
     <b-form-checkbox v-model='onlyseen'>Hide never seen students</b-form-checkbox>
     <b-form-checkbox v-model='justoks'>Count exercises with at least one passing case as perfect</b-form-checkbox>
-    <b-table small fixed :filter='filter' :items='items' :fields='fields'></b-table>
-</div>
+    <b-table :filter='filter' :items='items' :fields='fields' small fixed>
+      <template v-for='field in fields.slice(1)' slot-scope='row' :slot='field.key'>
+        <span :key='field.key'>
+          <completion-bar v-if='row.value' :tot='100 * row.value'/>
+          <span v-else>&nbsp;</span>
+        </span>
+      </template>
+    </b-table>
+  </div>
 </template>
 
 <script>
 import {mapState, mapGetters} from 'vuex';
 
+import CompletionBar from '@/components/CompletionBar.vue';
+
 export default {
     name: 'overview',
+    components: { 'completion-bar': CompletionBar }, 
     data: () => ({
         onlyseen: true,
         justoks: false
     }),
-    created() {
-        this.fetchData();
-    },
-    watch: {
-        '$route': 'fetchData'
-    },
-    methods: {
-        fetchData() {
-            this.$store.dispatch('fetch_overview');
-        },
-        resultFormatter: function(value) {
-            if (value === undefined) return '';
-            let val = Math.floor(value * 100);
-            let res = `<div class="progress-bar bg-success" role="progressbar" style="width: ${val}%">${val ? val : ''}</div>`;
-            return `<div class="progress">${res}</div>`;
-        },
-        filter: function(row) {
-            return row['_TOTAL_'] !== undefined || !this.onlyseen;
-        }
-    },
     computed: {
         ...mapState(['overview']),
         ...mapGetters(['sessions', 'percentage']),
@@ -43,7 +33,7 @@ export default {
             let local_fields = [{key: 'uid', sortable: true}];
             if (this.$store.state.session.auth)
                 local_fields.push({key: 'info', sortable: true});
-            this.sessions.forEach(
+            this.sessions.slice().forEach(
                 s => local_fields.push({
                     key: s,
                     label: s,
@@ -55,7 +45,6 @@ export default {
                 key: '_TOTAL_',
                 label: 'TOTAL',
                 sortable: true,
-                formatter: 'resultFormatter'
             });
             return local_fields;
         },
@@ -69,7 +58,21 @@ export default {
             });
             return local_items;
         }
-    }
+    },
+    watch: {
+        '$route': 'fetchData'
+    },
+    created() {
+        this.fetchData();
+    },
+    methods: {
+        fetchData() {
+            this.$store.dispatch('fetch_overview');
+        },
+        filter: function(row) {
+            return row['_TOTAL_'] !== undefined || !this.onlyseen;
+        }
+    },
 };
 </script>
 

@@ -1,9 +1,9 @@
 <template>
-<div class='charts'>
+  <div class='charts'>
     <b-form-checkbox v-model='hidelegend'>Hide legend</b-form-checkbox>
     <b-form-checkbox v-model='setmax'>Scale to max</b-form-checkbox>
-    <area-chart height="500px" :data="chart_data" :library="chart_options" :xtype="'number'" :xmax="100"></area-chart>
-</div>
+    <area-chart :data='chart_data' :library='chart_options' :xtype='&apos;number&apos;' :xmax='100' height='500px'/>
+  </div>
 </template>
 
 <script>
@@ -22,17 +22,6 @@ export default {
         hidelegend: true,
         setmax: true
     }),
-    created() {
-        this.fetchData();
-    },
-    watch: {
-        '$route': 'fetchData'
-    },
-    methods: {
-        fetchData() {
-            this.$store.dispatch('fetch_overview');
-        }
-    },
     computed: {
         ...mapState(['overview']),
         ...mapGetters(['sessions', 'percentage']),
@@ -76,7 +65,18 @@ export default {
             });
             return data;
         }
-    }
+    },
+    watch: {
+        '$route': 'fetchData'
+    },
+    created() {
+        this.fetchData();
+    },
+    methods: {
+        fetchData() {
+            this.$store.dispatch('fetch_overview');
+        }
+    },
 };
 </script>
 

@@ -1,8 +1,8 @@
 <template>
-<b-container fluid>
-    <router-view name='navbar'></router-view>
-    <b-row><b-col><router-view name='detail'></router-view></b-col></b-row>
-</b-container>
+  <b-container fluid>
+    <router-view name='navbar'/>
+    <b-row><b-col><router-view name='detail'/></b-col></b-row>
+  </b-container>
 </template>
 
 <script>

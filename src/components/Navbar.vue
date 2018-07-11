@@ -1,23 +1,23 @@
 <template>
-<b-navbar toggleable type="dark" variant="info">
-    <b-navbar-brand href="#">Scythe Viewer</b-navbar-brand>
+  <b-navbar toggleable type='dark' variant='info'>
+    <b-navbar-brand href='#'>Scythe Viewer</b-navbar-brand>
     <b-navbar-nav>
-        <b-nav-item :to="{name: 'overview'}">Overview</b-nav-item>
-        <b-nav-item :to="{name: 'charts'}">Charts</b-nav-item>
-        <b-nav-item v-if="sessionTo" :to="sessionTo">Session</b-nav-item>
-        <b-nav-text>
-            <icon :name='lock'></icon>
-        </b-nav-text>
+      <b-nav-item :to='{name: "overview"}'>Overview</b-nav-item>
+      <b-nav-item :to='{name: "charts"}'>Charts</b-nav-item>
+      <b-nav-item v-if='sessionTo' :to='sessionTo'>Session</b-nav-item>
+      <b-nav-text>
+        <icon :name='lock'/>
+      </b-nav-text>
     </b-navbar-nav>
-    <b-navbar-nav class="ml-auto">
-        <b-nav-text v-if='$store.state.load'>
-            <b-badge :variant='$store.state.load < 10 ? "secondary" : ($store.state.load < 50 ? "warning" : "danger")'>Load: {{$store.state.load}}</b-badge>
-        </b-nav-text>
-        <b-nav-form>
-            <b-form-select v-model="selected" :options="options"></b-form-select>
-        </b-nav-form>
+    <b-navbar-nav class='ml-auto'>
+      <b-nav-text v-if='$store.state.load'>
+        <b-badge :variant='$store.state.load < 10 ? "secondary" : ($store.state.load < 50 ? "warning" : "danger")'>Load: {{$store.state.load}}</b-badge>
+      </b-nav-text>
+      <b-nav-form>
+        <b-form-select v-model='selected' :options='options'/>
+      </b-nav-form>
     </b-navbar-nav>
-</b-navbar>
+  </b-navbar>
 </template>
 
 <script>
@@ -25,11 +25,6 @@ import {mapState, mapGetters} from 'vuex';
 
 export default {
     name: 'navbar',
-    created() {
-        if (!this.sessions.length) this.$store.dispatch('fetch_sessions');
-    },
-    methods: {
-    },
     computed: {
         ...mapState(['session', 'session2auth']),
         ...mapGetters(['sessions']),
@@ -54,6 +49,9 @@ export default {
         lock() {
             return this.session2auth[this.session.id] ? 'unlock' : 'lock';
         }
+    },
+    created() {
+        if (!this.sessions.length) this.$store.dispatch('fetch_sessions');
     },
 };
 </script>

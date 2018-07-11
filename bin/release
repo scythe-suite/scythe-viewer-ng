@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=v0.3.1
+version="v$(grep '"version"' package.json   | cut -d'"' -f4)"
 
 ./bin/mkdist
 

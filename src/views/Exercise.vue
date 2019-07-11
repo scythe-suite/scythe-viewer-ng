@@ -9,7 +9,7 @@
       </b-card>
     </b-tab>
     <b-tab :disabled='issues.length == 0' title='Issues'>
-      <b-card v-for='issue in issues' :header='issue.name' :key='issue.name' :header-bg-variant='issue.errors ? &apos;danger&apos; : &apos;warning&apos;'>
+      <b-card v-for='issue in issues' :header='issue.name' :key='issue.name' :header-bg-variant="issue.errors ? 'danger' : 'warning'">
         <pre v-if='issue.errors' class='card-text'>{{issue.errors}}</pre>
         <div v-if='issue.diffs'>
           <b-card-group deck>

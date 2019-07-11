@@ -2,7 +2,7 @@
   <div>
     <b-table :items='items' :fields='fields' :sort-compare='customSort' small fixed striped @row-clicked='click'>
       <template slot='timestamp' slot-scope='data'>
-        <timeago :since='parseInt(data.item.timestamp)'/>
+        <timeago :datetime='new Date(parseInt(data.item.timestamp))'/>
       </template>
       <template v-for='(tot, exercise) in casenum' slot-scope='row' :slot='exercise'>
         <span :key='exercise'>

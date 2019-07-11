@@ -3,9 +3,19 @@ import Vue from 'vue';
 import store from './store';
 import router from './router';
 
-import VueSocketio from 'vue-socket.io';
-import socketio from 'socket.io-client';
-Vue.use(VueSocketio, socketio('', {path: document.location.pathname + 'r/socket.io'}), store);
+import VueSocketIO from 'vue-socket.io';
+Vue.use(
+    new VueSocketIO({
+        debug: true,
+        connection: '',
+        vuex: {
+            store,
+            actionPrefix: 'SOCKET_',
+            mutationPrefix: 'SOCKET_'
+        },
+        options: { path: document.location.pathname + 'r/socket.io' }
+    })
+);
 
 import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -21,7 +31,7 @@ Vue.use(VueTimeago, {
     name: 'timeago', // component name, `timeago` by default
     locale: 'en',
     locales: {
-        'en': require('date-fns/locale/en')
+        en: require('date-fns/locale/en')
     }
 });
 
@@ -32,5 +42,5 @@ Vue.config.productionTip = false;
 new Vue({
     store,
     router,
-    render: h => h(App),
+    render: h => h(App)
 }).$mount('#app');

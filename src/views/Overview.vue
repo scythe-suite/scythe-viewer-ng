@@ -2,7 +2,7 @@
   <div class='overview'>
     <b-form-checkbox v-model='onlyseen'>Hide never seen students</b-form-checkbox>
     <b-form-checkbox v-model='justoks'>Count exercises with at least one passing case as perfect</b-form-checkbox>
-    <b-table :filter='filter' :items='items' :fields='fields' small fixed>
+    <b-table :filter-function='filter' :items='items' :fields='fields' small fixed>
       <template v-for='field in fields.slice(1)' slot-scope='row' :slot='field.key'>
         <span :key='field.key'>
           <completion-bar v-if='row.value' :tot='100 * row.value'/>

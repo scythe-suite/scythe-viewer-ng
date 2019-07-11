@@ -2,17 +2,16 @@
   <div class='charts'>
     <b-form-checkbox v-model='hidelegend'>Hide legend</b-form-checkbox>
     <b-form-checkbox v-model='setmax'>Scale to max</b-form-checkbox>
-    <area-chart :data='chart_data' :library='chart_options' :xtype='&apos;number&apos;' :xmax='100' height='500px'/>
+    <area-chart :data='chart_data' :library='chart_options' height='500px'/>
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
 
-import Chartkick from 'chartkick';
-import VueChartkick from 'vue-chartkick';
+import Chartkick from 'vue-chartkick';
 import Chart from 'chart.js'; // eslint-disable-line
-Vue.use(VueChartkick, {Chartkick});
+Vue.use(Chartkick.use(Chart));
 
 import {mapState, mapGetters} from 'vuex';
 

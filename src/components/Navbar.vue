@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable type='dark' variant='info'>
+  <b-navbar toggleable="lg" type='dark' variant='info'>
     <b-navbar-brand href='#'>Scythe Viewer</b-navbar-brand>
     <b-navbar-nav>
       <b-nav-item :to='{name: "overview"}'>Overview</b-nav-item>
@@ -17,6 +17,7 @@
         <b-form-select v-model='selected' :options='options'/>
       </b-nav-form>
     </b-navbar-nav>
+
   </b-navbar>
 </template>
 

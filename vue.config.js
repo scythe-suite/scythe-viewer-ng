@@ -1,18 +1,20 @@
 module.exports = {
 
-    devServer: {
-        historyApiFallback: true,
-        noInfo: true,
-        overlay: true,
-        proxy: {
-            '/r': {
-                target: 'http://localhost/',
-                pathRewrite: {
-                    '^/r': '/st/tester/r'
-                }
-            }
-        }
-    },
+  publicPath: './',
 
-    lintOnSave: undefined
+  devServer: {
+    historyApiFallback: true,
+    noInfo: true,
+    overlay: true,
+    proxy: {
+      '/r': {
+        target: 'http://localhost/',
+        pathRewrite: {
+          '^/r': '/st/tester/r'
+        }
+      }
+    }
+  },
+
+  lintOnSave: undefined
 };

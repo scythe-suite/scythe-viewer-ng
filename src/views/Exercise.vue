@@ -1,7 +1,7 @@
 <template>
   <b-tabs card>
     <b-tab :disabled='solutions.length == 0' title='Sources' active>
-      <b-card v-for='solution in solutions' :header='solution.name' :key='solution.name'>
+      <b-card v-for='solution in solutions' :key='solution.name' :header='solution.name'>
         <pre class='card-text'><code v-html='solution.highlighted'/></pre>
       </b-card>
       <b-card v-if='exercise.compilation' header='Compilation errors' header-bg-variant='primary'>
@@ -9,7 +9,7 @@
       </b-card>
     </b-tab>
     <b-tab :disabled='issues.length == 0' title='Issues'>
-      <b-card v-for='issue in issues' :header='issue.name' :key='issue.name' :header-bg-variant="issue.errors ? 'danger' : 'warning'">
+      <b-card v-for='issue in issues' :key='issue.name' :header='issue.name' :header-bg-variant='issue.errors ? "danger" : "warning"'>
         <pre v-if='issue.errors' class='card-text'>{{issue.errors}}</pre>
         <div v-if='issue.diffs'>
           <b-card-group deck>
@@ -21,12 +21,12 @@
       </b-card>
     </b-tab>
     <b-tab :disabled='texts.length == 0' title='Texts'>
-      <b-card v-for='text in texts' :header='text.name' :key='text.name'>
+      <b-card v-for='text in texts' :key='text.name' :header='text.name'>
         <div class='markdown-body card-text' v-html='text.marked'/>
       </b-card>
     </b-tab>
     <b-tab :disabled='caseNames.length == 0' title='Cases'>
-      <b-card v-for='name in caseNames' :header='name' :key='name'>
+      <b-card v-for='name in caseNames' :key='name' :header='name'>
         <b-card-group deck>
           <b-card v-if='cases[name].input' header='Input'><pre class='card-text'>{{cases[name].input}}</pre></b-card>
           <b-card v-if='cases[name].args' header='Args'><pre class='card-text'>{{cases[name].args}}</pre></b-card>

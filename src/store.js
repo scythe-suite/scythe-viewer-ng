@@ -103,10 +103,10 @@ const STORE = new Vuex.Store({
         set_exercise(state, {exercise}) {
             Object.assign(state.exercise, exercise);
         },
-        SOCKET_LOAD_MESSAGE(state, {load}) {
+        SOCKET_load_message(state, {load}) {
             state.load = load;
         },
-        SOCKET_SUMMARY_MESSAGE(state, {summary}) {
+        SOCKET_summary_message(state, {summary}) {
             if (summary.session_id != state.session.id) return;
             if (state.session.private) return;
             let payload = {

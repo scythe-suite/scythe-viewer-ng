@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="lg" type='dark' variant='info'>
+  <b-navbar toggleable='lg' type='dark' variant='info'>
     <b-navbar-brand href='#'>Scythe Viewer</b-navbar-brand>
     <b-navbar-nav>
       <b-nav-item :to='{name: "overview"}'>Overview</b-nav-item>

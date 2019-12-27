@@ -1,10 +1,10 @@
 <template>
   <div>
     <b-table :items='items' :fields='fields' :sort-compare='customSort' small fixed striped @row-clicked='click'>
-      <template slot='timestamp' slot-scope='data'>
+      <template v-slot:cell(timestamp)='data'>
         <timeago :datetime='new Date(parseInt(data.item.timestamp))'/>
       </template>
-      <template v-for='(tot, exercise) in casenum' slot-scope='row' :slot='exercise'>
+      <template v-for='(tot, exercise) in casenum' v-slot:[`cell(${exercise})`]='row'>
         <span :key='exercise'>
           <status-bar v-if='row.value' :status='row.value' :tot='tot'/>
           <span v-else>&nbsp;</span>
@@ -21,12 +21,12 @@ import StatusBar from '@/components/StatusBar.vue';
 
 export default {
     name: 'session',
-    components: { 'status-bar': StatusBar }, 
+    components: { 'status-bar': StatusBar },
     props: ['session_id', 'auth'],
     data: () => ({}),
     computed: {
         ...mapState(['session', 'session2auth']),
-        casenum: function() { 
+        casenum: function() {
             if (!this.session.id) return {};
             return this.session.casenum;
         },

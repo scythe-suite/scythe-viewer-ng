@@ -1,7 +1,7 @@
 {
   "name": "scythe-viewer-ng",
   "description": "A tool to visualize Scythe results",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Massimo Santini <massimo.santini@gmail.com>",
   "license": "GPL-3.0-or-later",
   "scripts": {
